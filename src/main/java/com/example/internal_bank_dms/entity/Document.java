@@ -9,49 +9,51 @@ public class Document {
     @Column(nullable = false)
     private Long id;
 
-    @Column(name= "Bucket_name")
-    private String BucketName;
-    private String Key;
+    @Column(name= "bucket_name")
+    private String bucketName;
 
-    public Document() {
-    }
+    @Column(name= "key")
+    private String key;
 
     public Document(Long id, String bucketName, String key) {
         this.id = id;
-        BucketName = bucketName;
-        Key = key;
+        this.bucketName = bucketName;
+        this.key = key;
+    }
+
+    public Document() {
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getBucketName() {
-        return BucketName;
-    }
-
-    public String getKey() {
-        return Key;
-    }
-
     public void setId(Long id) {
         this.id = id;
     }
 
+    public String getBucketName() {
+        return bucketName;
+    }
+
     public void setBucketName(String bucketName) {
-        BucketName = bucketName;
+        this.bucketName = bucketName;
+    }
+
+    public String getKey() {
+        return key;
     }
 
     public void setKey(String key) {
-        Key = key;
+        this.key = key;
     }
 
     @Override
     public String toString() {
         return "Document{" +
                 "id=" + id +
-                ", BucketName='" + BucketName + '\'' +
-                ", Key='" + Key + '\'' +
+                ", bucketName='" + bucketName + '\'' +
+                ", key='" + key + '\'' +
                 '}';
     }
 }

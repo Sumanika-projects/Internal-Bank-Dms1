@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DocumentRepository extends JpaRepository<Document,Long> {
 
+    public void deleteByBucketNameAndKey(String bucketName, String key);
 }

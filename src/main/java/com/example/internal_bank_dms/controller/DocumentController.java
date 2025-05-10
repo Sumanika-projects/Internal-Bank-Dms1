@@ -60,5 +60,11 @@ public class DocumentController {
           httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
           return new ResponseEntity<>(content,httpHeaders,HttpStatus.OK);
     }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteFile(@RequestParam String bucketName, @RequestParam String key)
+    {
+        return documentService.deleteFile(bucketName,key);
+    }
 }
 
