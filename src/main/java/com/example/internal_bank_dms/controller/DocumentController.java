@@ -66,5 +66,13 @@ public class DocumentController {
     {
         return documentService.deleteFile(bucketName,key);
     }
+
+    @PostMapping("/update")
+    public ResponseEntity<String> updateFile(@RequestParam("file") MultipartFile file) throws IOException {
+        String key = file.getOriginalFilename();
+
+        return documentService.updateFile(bucketName,key,file);
+
+    }
 }
 

@@ -4,8 +4,12 @@ import com.example.internal_bank_dms.entity.Document;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface DocumentRepository extends JpaRepository<Document,Long> {
 
-    public void deleteByBucketNameAndKey(String bucketName, String key);
+    void deleteByBucketNameAndKey(String bucketName, String key);
+
+    Optional<Document> findByKey(String key);
 }
