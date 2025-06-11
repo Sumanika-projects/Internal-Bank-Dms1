@@ -2,18 +2,16 @@ package com.example.internal_bank_dms.service;
 
 import com.example.internal_bank_dms.entity.Document;
 import com.example.internal_bank_dms.repository.DocumentRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -27,10 +25,36 @@ public class DocumentService {
     @Autowired
     private S3Client s3Client;
 
-    public ResponseEntity<String> uploadFile(Document document)
+    public ResponseEntity<String> uploadFile(String bucketName,String key, MultipartFile file) throws IOException {
+        try {
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(key)
+                    .build();
+            s3Client.putObject(putObjectRequest, RequestBody.fromBytes(file.getBytes()));
+            Document document = new Document();
+            document.setKey(key);
+            document.setBucketName(bucketName);
+            documentRepository.save(document);
+            return new ResponseEntity<>("successfully added", HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>("File upload failed ", HttpStatus.FORBIDDEN);
+        }
+
+    }
+
+    public ResponseEntity<byte[]> downloadFile(String bucketName,String key)
     {
-        documentRepository.save(document);
-        return new ResponseEntity<>("successfully added", HttpStatus.CREATED);
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .build();
+        ResponseBytes<GetObjectResponse> objectBytes  = s3Client.getObjectAsBytes(getObjectRequest);
+        byte[] content = objectBytes.asByteArray();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentDispositionFormData("attachment",key);
+        httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        return new ResponseEntity<>(content,httpHeaders,HttpStatus.OK);
     }
     @Transactional
     public ResponseEntity<String> deleteFile(String bucketName, String key)

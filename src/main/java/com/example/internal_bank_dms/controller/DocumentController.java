@@ -31,34 +31,13 @@ public class DocumentController {
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
         String key = file.getOriginalFilename();
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(key)
-                .build();
-        s3Client.putObject(putObjectRequest, RequestBody.fromBytes(file.getBytes()));
-        Document document = new Document();
-        document.setKey(key);
-        document.setBucketName(bucketName);
-
-        return documentService.uploadFile(document);
-
-
+        return documentService.uploadFile(bucketName,key,file);
     }
 
     @GetMapping("/download")
     public ResponseEntity<byte[]> getFile(@RequestParam String bucketName, @RequestParam String key)
     {
-
-        GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                .bucket(bucketName)
-                .key(key)
-                .build();
-          ResponseBytes<GetObjectResponse> objectBytes  = s3Client.getObjectAsBytes(getObjectRequest);
-          byte[] content = objectBytes.asByteArray();
-          HttpHeaders httpHeaders = new HttpHeaders();
-          httpHeaders.setContentDispositionFormData("attachment",key);
-          httpHeaders.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-          return new ResponseEntity<>(content,httpHeaders,HttpStatus.OK);
+        return documentService.downloadFile(bucketName, key);
     }
 
     @DeleteMapping("/delete")
