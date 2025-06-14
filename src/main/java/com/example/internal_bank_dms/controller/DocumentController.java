@@ -30,8 +30,8 @@ public class DocumentController {
 
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
-        String key = file.getOriginalFilename();
-        return documentService.uploadFile(bucketName,key,file);
+        String fileName = file.getOriginalFilename();
+        return documentService.uploadFile(bucketName,fileName,file);
     }
 
     @GetMapping("/download")

@@ -9,7 +9,7 @@ public class DocumentExtension {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(name ="extension_name",nullable = false,unique = true)
     private String extensionName;
     @Column
     private String key;

@@ -1,6 +1,7 @@
 package com.example.internal_bank_dms.service;
 
 import com.example.internal_bank_dms.entity.Document;
+import com.example.internal_bank_dms.repository.DocumentExtensionRepo;
 import com.example.internal_bank_dms.repository.DocumentRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -23,10 +25,17 @@ public class DocumentService {
     private DocumentRepository documentRepository;
 
     @Autowired
+    private DocumentExtensionRepo documentExtensionRepo;
+
+    @Autowired
     private S3Client s3Client;
 
-    public ResponseEntity<String> uploadFile(String bucketName,String key, MultipartFile file) throws IOException {
+    public ResponseEntity<String> uploadFile(String bucketName,String fileName, MultipartFile file) throws IOException {
         try {
+            String extensionName = fileName.substring(fileName.lastIndexOf('.')+1);
+            String extensionKey = documentExtensionRepo.findByExtensionName(extensionName);
+            String key = extensionKey+"/"+fileName;
+            System.out.println(key);
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(key)
@@ -35,6 +44,9 @@ public class DocumentService {
             Document document = new Document();
             document.setKey(key);
             document.setBucketName(bucketName);
+            document.setUploadedAt(LocalDateTime.now());
+            document.setFilename(fileName);
+            document.setFileContentType(file.getContentType());
             documentRepository.save(document);
             return new ResponseEntity<>("successfully added", HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {

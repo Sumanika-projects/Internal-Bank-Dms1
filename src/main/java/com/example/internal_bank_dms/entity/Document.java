@@ -2,6 +2,8 @@ package com.example.internal_bank_dms.entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 public class Document {
     @Id
@@ -20,11 +22,11 @@ public class Document {
     @Column
     private String uploadedBy;
     @Column
-    private String uploadedAt;
+    private LocalDateTime uploadedAt;
     @Column
     private String updatedBy;
     @Column
-    private String updatedAt;
+    private LocalDateTime updatedAt;
     @Column
     private String fileContentType;
 
@@ -48,7 +50,7 @@ public class Document {
         return uploadedBy;
     }
 
-    public String getUploadedAt() {
+    public LocalDateTime getUploadedAt() {
         return uploadedAt;
     }
 
@@ -56,8 +58,12 @@ public class Document {
         return updatedBy;
     }
 
-    public String getUpdatedAt() {
+    public LocalDateTime getUpdatedAt() {
         return updatedAt;
+    }
+
+    public String getFileContentType() {
+        return fileContentType;
     }
 
     public void setId(Long id) {
@@ -80,7 +86,7 @@ public class Document {
         this.uploadedBy = uploadedBy;
     }
 
-    public void setUploadedAt(String uploadedAt) {
+    public void setUploadedAt(LocalDateTime uploadedAt) {
         this.uploadedAt = uploadedAt;
     }
 
@@ -88,15 +94,15 @@ public class Document {
         this.updatedBy = updatedBy;
     }
 
-    public void setUpdatedAt(String updatedAt) {
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
-    public String getFileContentType() {
-        return fileContentType;
+    public void setFileContentType(String fileContentType) {
+        this.fileContentType = fileContentType;
     }
 
-    public Document(Long id, String bucketName, String key, String filename, String uploadedBy, String uploadedAt, String updatedBy, String updatedAt, String fileContentType) {
+    public Document(Long id, String bucketName, String key, String filename, String uploadedBy, LocalDateTime uploadedAt, String updatedBy, LocalDateTime updatedAt, String fileContentType) {
         this.id = id;
         this.bucketName = bucketName;
         this.key = key;
@@ -105,10 +111,6 @@ public class Document {
         this.uploadedAt = uploadedAt;
         this.updatedBy = updatedBy;
         this.updatedAt = updatedAt;
-        this.fileContentType = fileContentType;
-    }
-
-    public void setFileContentType(String fileContentType) {
         this.fileContentType = fileContentType;
     }
 
